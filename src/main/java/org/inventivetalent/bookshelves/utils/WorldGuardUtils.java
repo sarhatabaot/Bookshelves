@@ -1,4 +1,4 @@
-package org.inventivetalent.bookshelves;
+package org.inventivetalent.bookshelves.utils;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -10,6 +10,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.inventivetalent.bookshelves.Bookshelves;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

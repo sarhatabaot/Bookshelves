@@ -1,8 +1,9 @@
-package org.inventivetalent.bookshelves;
+package org.inventivetalent.bookshelves.utils;
 
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.metadata.Metadatable;
+import org.inventivetalent.bookshelves.Bookshelves;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.inventivetalent.bookshelves.utils.WorldGuardUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class ShelfListener implements Listener {

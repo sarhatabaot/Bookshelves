@@ -1,4 +1,4 @@
-package org.inventivetalent.bookshelves;
+package org.inventivetalent.bookshelves.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -7,6 +7,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Hopper;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.inventivetalent.bookshelves.Bookshelves;
+import org.inventivetalent.bookshelves.ScheduledItemTransfer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class HopperUtils {
 
     public static void initializeHopperSupport() {
         Bookshelves.instance.getLogger().info("Hopper support enabled!");
-        Bookshelves.instance.shelves.forEach(shelfLocation -> pull(shelfLocation.getBlock()));
+        Bookshelves.instance.getShelves().forEach(shelfLocation -> pull(shelfLocation.getBlock()));
     }
 
 }
