@@ -21,10 +21,10 @@ import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 
 
-public class ScheduleBookLoading extends BukkitRunnable {
+public class ScheduledBookLoading extends BukkitRunnable {
     private final Bookshelves plugin;
 
-    public ScheduleBookLoading(final Bookshelves plugin) {
+    public ScheduledBookLoading(final Bookshelves plugin) {
         this.plugin = plugin;
     }
 
@@ -55,6 +55,7 @@ public class ScheduleBookLoading extends BukkitRunnable {
                             if (bookElement.isJsonArray()) {// Old file
                                 JsonArray bookArray = bookElement.getAsJsonArray();
                                 for (final JsonElement element : bookArray) {
+                                    
                                     JsonObject nextBook = element.getAsJsonObject();
                                     int slot = nextBook.get("slot").getAsInt();
                                     JsonObject jsonItem = nextBook.get("item").getAsJsonObject();

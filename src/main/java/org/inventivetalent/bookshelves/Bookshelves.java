@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.inventivetalent.bookshelves.listeners.ShelfListener;
 import org.inventivetalent.bookshelves.manager.RestrictionManager;
-import org.inventivetalent.bookshelves.tasks.ScheduleBookLoading;
+import org.inventivetalent.bookshelves.tasks.ScheduledBookLoading;
 import org.inventivetalent.bookshelves.utils.AccessUtil;
 import org.inventivetalent.bookshelves.utils.HopperUtils;
 import org.inventivetalent.bookshelves.utils.MetaHelper;
@@ -98,7 +98,7 @@ public class Bookshelves extends JavaPlugin {
         // ShelfFile creation
         createShelfFile();
 
-        new ScheduleBookLoading(this).runTaskLater(this,40L);
+        new ScheduledBookLoading(this).runTaskLater(this,40L);
         new Metrics(this, 5131);
     }
 
