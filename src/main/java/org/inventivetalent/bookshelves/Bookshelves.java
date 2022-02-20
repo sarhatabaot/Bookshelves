@@ -33,14 +33,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Bookshelves extends JavaPlugin {
     public static Bookshelves instance;
 
-    int inventorySize = 18;
+    private int inventorySize = 18;
     private String inventoryTitle = "Bookshelf";
-    private Set<String> disabledWorlds = new HashSet<>();
+    private final Set<String> disabledWorlds = new HashSet<>();
     boolean onlyBooks = true;
     private boolean worldGuardSupport = false;
     boolean checkRestrictions = false;
     private boolean hopperSupport = false;
-    RestrictionManager restrictionManager = null;
+    private RestrictionManager restrictionManager = null;
 
     private final Set<Location> shelves = new HashSet<>();
     private final File shelfFile = new File(getDataFolder(), "shelves.json");
@@ -174,14 +174,12 @@ public class Bookshelves extends JavaPlugin {
 
                 try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                      BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)){
-                    
+
                     dataOutput.writeInt(contents.length);
 
                     for (ItemStack stack : contents) {
                         dataOutput.writeObject(stack);
                     }
-                    dataOutput.close();
-
                     shelfObject.addProperty("books", Base64Coder.encodeLines(outputStream.toByteArray()));
                 }
 
