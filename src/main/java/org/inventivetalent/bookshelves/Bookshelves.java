@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.inventivetalent.bookshelves.listeners.ShelfListener;
+import org.inventivetalent.bookshelves.manager.RestrictionManager;
 import org.inventivetalent.bookshelves.utils.AccessUtil;
 import org.inventivetalent.bookshelves.utils.HopperUtils;
 import org.inventivetalent.bookshelves.utils.MetaHelper;

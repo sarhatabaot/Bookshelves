@@ -1,6 +1,7 @@
-package org.inventivetalent.bookshelves;
+package org.inventivetalent.bookshelves.manager;
 
 import org.bukkit.Material;
+import org.inventivetalent.bookshelves.Bookshelves;
 
 import java.util.ArrayList;
 import java.util.List;
