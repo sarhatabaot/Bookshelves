@@ -8,21 +8,19 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.inventivetalent.bookshelves.listeners.ShelfListener;
 import org.inventivetalent.bookshelves.manager.RestrictionManager;
+import org.inventivetalent.bookshelves.tasks.ScheduleBookLoading;
 import org.inventivetalent.bookshelves.utils.AccessUtil;
 import org.inventivetalent.bookshelves.utils.HopperUtils;
 import org.inventivetalent.bookshelves.utils.MetaHelper;
 import org.inventivetalent.bookshelves.utils.WorldGuardUtils;
-import org.inventivetalent.itembuilder.ItemBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -33,20 +31,19 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Bookshelves extends JavaPlugin {
-
     public static Bookshelves instance;
 
-    int INVENTORY_SIZE = 18;
+    int inventorySize = 18;
     private String inventoryTitle = "Bookshelf";
     private Set<String> disabledWorlds = new HashSet<>();
     boolean onlyBooks = true;
     private boolean worldGuardSupport = false;
     boolean checkRestrictions = false;
-    boolean hopperSupport = false;
+    private boolean hopperSupport = false;
     RestrictionManager restrictionManager = null;
 
     private final Set<Location> shelves = new HashSet<>();
-    File shelfFile = new File(getDataFolder(), "shelves.json");
+    private final File shelfFile = new File(getDataFolder(), "shelves.json");
 
     @Override
     public void onLoad() {
@@ -65,6 +62,14 @@ public class Bookshelves extends JavaPlugin {
         return inventoryTitle;
     }
 
+    public boolean isHopperSupport() {
+        return hopperSupport;
+    }
+
+    public File getShelfFile() {
+        return shelfFile;
+    }
+
     public Set<String> getDisabledWorlds() {
         return disabledWorlds;
     }
@@ -80,10 +85,10 @@ public class Bookshelves extends JavaPlugin {
 
         // Save configuration & load values
         saveDefaultConfig();
-        INVENTORY_SIZE = getConfig().getInt("inventory.size");
-        if (INVENTORY_SIZE % 9 != 0) {
+        inventorySize = getConfig().getInt("inventory.size");
+        if (inventorySize % 9 != 0) {
             getLogger().warning("Inventory size is not a multiple of 9");
-            INVENTORY_SIZE = 18;
+            inventorySize = 18;
         }
         inventoryTitle = ChatColor.translateAlternateColorCodes('&', getConfig().getString("inventory.title")) +/* Unique title */"§B§S";
         if (getConfig().contains("disabledWorlds")) {
@@ -136,66 +141,7 @@ public class Bookshelves extends JavaPlugin {
             }
         }
 
-        // Schedule bookshelf loading
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            getLogger().info("Loading shelves...");
-            try {
-                JsonElement jsonElement = new JsonParser().parse(new FileReader(shelfFile));
-                if (jsonElement.isJsonArray()) {
-                    JsonArray jsonArray = jsonElement.getAsJsonArray();
-                    for (JsonElement next : jsonArray) {
-                        if (next.isJsonObject()) {
-                            JsonObject jsonObject = next.getAsJsonObject();
-                            Location location = JsonToLocation(jsonObject.get("location").getAsJsonObject());
-                            if (location.getBlock().getType() != Material.BOOKSHELF) {
-                                continue;
-                            }
-                            Inventory inventory = initShelf(location.getBlock());
-                            if (inventory == null) {
-                                inventory = getShelf(location.getBlock());
-                            }
-                            if (inventory == null) {
-                                continue;
-                            }
-
-                            if (jsonObject.has("books")) {
-                                JsonElement bookElement = jsonObject.get("books");
-                                if (bookElement.isJsonArray()) {// Old file
-                                    JsonArray bookArray = bookElement.getAsJsonArray();
-                                    for (final JsonElement element : bookArray) {
-                                        JsonObject nextBook = element.getAsJsonObject();
-                                        int slot = nextBook.get("slot").getAsInt();
-                                        JsonObject jsonItem = nextBook.get("item").getAsJsonObject();
-
-                                        ConfigurationSection yamlItem = JsonToYaml(jsonItem, new YamlConfiguration());
-                                        ItemStack itemStack = new ItemBuilder(Material.STONE).fromConfig(yamlItem).build();
-
-                                        inventory.setItem(slot, itemStack);
-                                    }
-                                } else {
-                                    ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(bookElement.getAsString()));
-                                    BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-                                    ItemStack[] stacks = new ItemStack[dataInput.readInt()];
-
-                                    for (int i = 0; i < stacks.length; i++) {
-                                        stacks[i] = (ItemStack) dataInput.readObject();
-                                    }
-                                    dataInput.close();
-
-                                    inventory.setContents(stacks);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (hopperSupport) HopperUtils.initializeHopperSupport();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            getLogger().info("Loaded " + shelves.size() + " shelves.");
-        }, 40);
-
+        new ScheduleBookLoading(this).runTaskLater(this,40L);
         new Metrics(this, 5131);
     }
 
@@ -261,7 +207,7 @@ public class Bookshelves extends JavaPlugin {
     public Inventory initShelf(@NotNull Block block) {
         Inventory inventory;
         if (!block.hasMetadata("BOOKSHELF_INVENTORY")) {
-            inventory = Bukkit.createInventory(null, INVENTORY_SIZE, inventoryTitle);
+            inventory = Bukkit.createInventory(null, inventorySize, inventoryTitle);
             MetaHelper.setMetaValue(block, "BOOKSHELF_INVENTORY", inventory);
 
             shelves.add(block.getLocation());
