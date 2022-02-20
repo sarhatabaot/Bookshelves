@@ -25,7 +25,8 @@ public class HopperUtils {
         List<Hopper> hoppers = getHoppers(block, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
         int seconds = 1;
 
-        if (shelf == null) return;
+        if (shelf == null)
+            return;
 
         if (shelf.firstEmpty() > -1) {
             for (Hopper hopper : hoppers) {
@@ -42,20 +43,24 @@ public class HopperUtils {
 
     public static void push(Block block) {
         List<Hopper> hoppers = getHoppers(block, BlockFace.DOWN).stream().filter(hopper -> !hopper.isLocked() && hopper.getInventory().firstEmpty() > -1).collect(Collectors.toCollection(ArrayList::new));
+        if (hoppers.isEmpty())
+            return;
 
-        if (!hoppers.isEmpty()) {
-            int seconds = 1;
-            Hopper hopper = hoppers.get(0);
-            Inventory shelf = Bookshelves.instance.getShelf(block);
 
-            if (shelf == null) return;
+        int seconds = 1;
+        Hopper hopper = hoppers.get(0);
+        Inventory shelf = Bookshelves.instance.getShelf(block);
 
-            for (ItemStack itemStack : shelf) {
-                if (!Bookshelves.instance.isValidBook(itemStack)) continue;
-                new ScheduledItemTransfer(shelf, hopper.getInventory(), itemStack, seconds);
-                seconds++;
-            }
+        if (shelf == null)
+            return;
+
+        for (ItemStack itemStack : shelf) {
+            if (!Bookshelves.instance.isValidBook(itemStack))
+                continue;
+            new ScheduledItemTransfer(shelf, hopper.getInventory(), itemStack, seconds);
+            seconds++;
         }
+
     }
 
     public static @NotNull List<Hopper> getHoppers(Block block, BlockFace @NotNull ... faces) {
