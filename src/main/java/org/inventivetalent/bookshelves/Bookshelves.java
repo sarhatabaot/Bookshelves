@@ -143,11 +143,10 @@ public class Bookshelves extends JavaPlugin {
                 JsonElement jsonElement = new JsonParser().parse(new FileReader(shelfFile));
                 if (jsonElement.isJsonArray()) {
                     JsonArray jsonArray = jsonElement.getAsJsonArray();
-                    for (Iterator<JsonElement> iterator = jsonArray.iterator(); iterator.hasNext(); ) {
-                        JsonElement next = iterator.next();
+                    for (JsonElement next : jsonArray) {
                         if (next.isJsonObject()) {
                             JsonObject jsonObject = next.getAsJsonObject();
-                            Location location = JSONToLocation(jsonObject.get("location").getAsJsonObject());
+                            Location location = JsonToLocation(jsonObject.get("location").getAsJsonObject());
                             if (location.getBlock().getType() != Material.BOOKSHELF) {
                                 continue;
                             }
@@ -163,12 +162,12 @@ public class Bookshelves extends JavaPlugin {
                                 JsonElement bookElement = jsonObject.get("books");
                                 if (bookElement.isJsonArray()) {// Old file
                                     JsonArray bookArray = bookElement.getAsJsonArray();
-                                    for (Iterator<JsonElement> bookIterator = bookArray.iterator(); bookIterator.hasNext(); ) {
-                                        JsonObject nextBook = bookIterator.next().getAsJsonObject();
+                                    for (final JsonElement element : bookArray) {
+                                        JsonObject nextBook = element.getAsJsonObject();
                                         int slot = nextBook.get("slot").getAsInt();
                                         JsonObject jsonItem = nextBook.get("item").getAsJsonObject();
 
-                                        ConfigurationSection yamlItem = JSONToYAML(jsonItem, new YamlConfiguration());
+                                        ConfigurationSection yamlItem = JsonToYaml(jsonItem, new YamlConfiguration());
                                         ItemStack itemStack = new ItemBuilder(Material.STONE).fromConfig(yamlItem).build();
 
                                         inventory.setItem(slot, itemStack);
@@ -212,7 +211,7 @@ public class Bookshelves extends JavaPlugin {
                     continue;
                 }
                 JsonObject shelfObject = new JsonObject();
-                shelfObject.add("location", LocationToJSON(location));
+                shelfObject.add("location", LocationToJson(location));
                 ItemStack[] contents = inventory.getContents();
 
                 {
@@ -248,19 +247,15 @@ public class Bookshelves extends JavaPlugin {
         if (itemStack == null) {
             return false;
         }
-        if (itemStack.getType() == Material.BOOK) {
-            return true;
+
+        switch (itemStack.getType()) {
+            case BOOK:
+            case WRITABLE_BOOK:
+            case ENCHANTED_BOOK:
+            case WRITTEN_BOOK:
+                return true;
+            default: return false;
         }
-        if (itemStack.getType() == Material.WRITABLE_BOOK) {
-            return true;
-        }
-        if (itemStack.getType() == Material.ENCHANTED_BOOK) {
-            return true;
-        }
-        if (itemStack.getType() == Material.WRITTEN_BOOK) {
-            return true;
-        }
-        return false;
     }
 
     public Inventory initShelf(@NotNull Block block) {
@@ -291,7 +286,7 @@ public class Bookshelves extends JavaPlugin {
     }
 
     @Contract("_, _ -> param2")
-    public static ConfigurationSection JSONToYAML(@NotNull JsonObject json, ConfigurationSection section) {
+    public static ConfigurationSection JsonToYaml(@NotNull JsonObject json, ConfigurationSection section) {
         for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
             String key = entry.getKey();
             JsonElement value = entry.getValue();
@@ -301,7 +296,7 @@ public class Bookshelves extends JavaPlugin {
                     var9 = section.createSection(key);
                 }
 
-                var9 = JSONToYAML((JsonObject) value, var9);
+                var9 = JsonToYaml((JsonObject) value, var9);
                 section.set(key, var9);
             } else if (!value.isJsonArray()) {
                 section.set(key, value.getAsString());
@@ -320,7 +315,7 @@ public class Bookshelves extends JavaPlugin {
         return section;
     }
 
-    public static @NotNull JsonObject LocationToJSON(@NotNull Location location) {
+    public static @NotNull JsonObject LocationToJson(@NotNull Location location) {
         JsonObject json = new JsonObject();
         json.addProperty("world", location.getWorld().getName());
         json.addProperty("x", location.getX());
@@ -329,7 +324,7 @@ public class Bookshelves extends JavaPlugin {
         return json;
     }
 
-    public static @NotNull Location JSONToLocation(@NotNull JsonObject json) {
+    public static @NotNull Location JsonToLocation(@NotNull JsonObject json) {
         String worldName = json.get("world").getAsString();
         double x = json.get("x").getAsDouble();
         double y = json.get("y").getAsDouble();
