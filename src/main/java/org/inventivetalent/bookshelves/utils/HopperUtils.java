@@ -8,7 +8,7 @@ import org.bukkit.block.Hopper;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.inventivetalent.bookshelves.Bookshelves;
-import org.inventivetalent.bookshelves.ScheduledItemTransfer;
+import org.inventivetalent.bookshelves.tasks.ScheduledItemTransfer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

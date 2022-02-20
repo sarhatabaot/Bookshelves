@@ -1,8 +1,9 @@
-package org.inventivetalent.bookshelves;
+package org.inventivetalent.bookshelves.tasks;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.inventivetalent.bookshelves.Bookshelves;
 
 public class ScheduledItemTransfer extends BukkitRunnable {
     private final Inventory source;
