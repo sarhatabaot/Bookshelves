@@ -17,7 +17,7 @@ public class ScheduledItemTransfer implements Runnable {
         this.destination = destination;
         this.itemStack = itemStack;
 
-        Bukkit.getScheduler().runTaskLater(Bookshelves.instance, this, 20 * seconds);
+        Bukkit.getScheduler().runTaskLater(Bookshelves.instance, this, 20L * seconds);
     }
 
     @Override

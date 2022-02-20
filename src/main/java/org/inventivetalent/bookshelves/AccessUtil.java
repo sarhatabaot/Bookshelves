@@ -1,22 +1,29 @@
 package org.inventivetalent.bookshelves;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public abstract class AccessUtil {
+	private AccessUtil() {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Set a specified Field accessible
 	 *
-	 * @param f Field set accessible
+	 * @param field Field set accessible
 	 */
-	public static Field setAccessible(Field f) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		f.setAccessible(true);
+	@Contract("_ -> param1")
+	public static @NotNull Field setAccessible(@NotNull Field field) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		field.setAccessible(true);
 		Field modifiersField = Field.class.getDeclaredField("modifiers");
 		modifiersField.setAccessible(true);
-		modifiersField.setInt(f, f.getModifiers() & 0xFFFFFFEF);
-		return f;
+		modifiersField.setInt(field, field.getModifiers() & 0xFFFFFFEF);
+		return field;
 	}
 
 	/**
@@ -24,12 +31,14 @@ public abstract class AccessUtil {
 	 *
 	 * @param m Method set accessible
 	 */
-	public static Method setAccessible(Method m) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	@Contract("_ -> param1")
+	public static @NotNull Method setAccessible(@NotNull Method m) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		m.setAccessible(true);
 		return m;
 	}
 
-	public static Constructor setAccessible(Constructor c) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	@Contract("_ -> param1")
+	public static @NotNull Constructor setAccessible(@NotNull Constructor c) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		c.setAccessible(true);
 		return c;
 	}

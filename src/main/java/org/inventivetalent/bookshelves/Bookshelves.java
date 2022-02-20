@@ -167,7 +167,7 @@ public class Bookshelves extends JavaPlugin {
 			}
 		}, 40);
 
-		new Metrics(this);
+		new Metrics(this, 5131);
 	}
 
 	@Override

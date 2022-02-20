@@ -3,18 +3,26 @@ package org.inventivetalent.bookshelves;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.metadata.Metadatable;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class MetaHelper {
 
-	public static <T> T setMetaValue(Metadatable meta, String key, T value) {
+	private MetaHelper() {
+		throw new UnsupportedOperationException();
+	}
+	@Contract("_, _, _ -> param3")
+	public static <T> T setMetaValue(@NotNull Metadatable meta, String key, T value) {
 		meta.setMetadata(key, new FixedMetadataValue(Bookshelves.instance, value));
 		return value;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getMetaValue(Metadatable metadatable, String key, Class<T> clazz) {
+	public static <T> @Nullable T getMetaValue(@NotNull Metadatable metadatable, String key, Class<T> clazz) {
 		List<MetadataValue> meta = metadatable.getMetadata(key);
 		for (MetadataValue m : meta) {
 			if (clazz.isInstance(m.value()) || m.value().getClass().isAssignableFrom(clazz)) {

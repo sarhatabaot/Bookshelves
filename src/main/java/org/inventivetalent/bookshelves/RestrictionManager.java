@@ -31,7 +31,7 @@ public class RestrictionManager {
     }
 
     public boolean isRestricted(Material material) {
-        return whitelist ? materials.contains(material) : !materials.contains(material);
+        return whitelist == materials.contains(material);
     }
 
 }

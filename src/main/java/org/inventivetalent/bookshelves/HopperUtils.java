@@ -7,12 +7,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Hopper;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class HopperUtils {
+    private HopperUtils() {
+        throw new UnsupportedOperationException();
+    }
 
     public static void pull(Block block) {
         Inventory shelf = Bookshelves.instance.getShelf(block);
@@ -52,7 +56,7 @@ public class HopperUtils {
         }
     }
 
-    public static List<Hopper> getHoppers(Block block, BlockFace... faces) {
+    public static @NotNull List<Hopper> getHoppers(Block block, BlockFace @NotNull ... faces) {
         List<Hopper> hoppers = new ArrayList<>();
         for (BlockFace face : faces) {
             Block relative = block.getRelative(face);
@@ -66,7 +70,7 @@ public class HopperUtils {
     }
 
     public static void scheduleNextCheck(Block block, int seconds) {
-        Bukkit.getScheduler().runTaskLater(Bookshelves.instance, () -> pull(block), 20 * seconds);
+        Bukkit.getScheduler().runTaskLater(Bookshelves.instance, () -> pull(block), 20L * seconds);
     }
 
     public static void initializeHopperSupport() {
