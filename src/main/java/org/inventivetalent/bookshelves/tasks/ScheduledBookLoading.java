@@ -55,7 +55,7 @@ public class ScheduledBookLoading extends BukkitRunnable {
                             if (bookElement.isJsonArray()) {// Old file
                                 JsonArray bookArray = bookElement.getAsJsonArray();
                                 for (final JsonElement element : bookArray) {
-                                    
+
                                     JsonObject nextBook = element.getAsJsonObject();
                                     int slot = nextBook.get("slot").getAsInt();
                                     JsonObject jsonItem = nextBook.get("item").getAsJsonObject();
@@ -66,16 +66,17 @@ public class ScheduledBookLoading extends BukkitRunnable {
                                     inventory.setItem(slot, itemStack);
                                 }
                             } else {
-                                ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(bookElement.getAsString()));
-                                BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-                                ItemStack[] stacks = new ItemStack[dataInput.readInt()];
+                                try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(bookElement.getAsString()));
+                                     BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+                                    ItemStack[] stacks = new ItemStack[dataInput.readInt()];
 
-                                for (int i = 0; i < stacks.length; i++) {
-                                    stacks[i] = (ItemStack) dataInput.readObject();
+                                    for (int i = 0; i < stacks.length; i++) {
+                                        stacks[i] = (ItemStack) dataInput.readObject();
+                                    }
+
+                                    inventory.setContents(stacks);
                                 }
-                                dataInput.close();
 
-                                inventory.setContents(stacks);
                             }
                         }
                     }
