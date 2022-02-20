@@ -41,8 +41,8 @@ public class WorldGuardUtils {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         BlockVector3 location = BukkitAdapter.adapt(block.getLocation()).toVector().toBlockPoint();
 
-        boolean allowChestAccess = !regionManager.isPresent() || regionManager.get().getApplicableRegions(location).testState(localPlayer, stateFlag);
-        boolean isRegionMember = !regionManager.isPresent() || regionManager.get().getApplicableRegions(location).isMemberOfAll(localPlayer);
+        boolean allowChestAccess = regionManager.isEmpty() || regionManager.get().getApplicableRegions(location).testState(localPlayer, stateFlag);
+        boolean isRegionMember = regionManager.isEmpty() || regionManager.get().getApplicableRegions(location).isMemberOfAll(localPlayer);
 
         return allowChestAccess || isRegionMember;
     }

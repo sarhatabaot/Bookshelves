@@ -18,6 +18,7 @@ import org.inventivetalent.bookshelves.Bookshelves;
 import org.inventivetalent.bookshelves.utils.WorldGuardUtils;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class ShelfListener implements Listener {
 
     private final Bookshelves plugin;

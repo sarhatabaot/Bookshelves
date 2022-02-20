@@ -203,14 +203,10 @@ public class Bookshelves extends JavaPlugin {
             return false;
         }
 
-        switch (itemStack.getType()) {
-            case BOOK:
-            case WRITABLE_BOOK:
-            case ENCHANTED_BOOK:
-            case WRITTEN_BOOK:
-                return true;
-            default: return false;
-        }
+        return switch (itemStack.getType()) {
+            case BOOK, WRITABLE_BOOK, ENCHANTED_BOOK, WRITTEN_BOOK -> true;
+            default -> false;
+        };
     }
 
     public Inventory initShelf(@NotNull Block block) {
@@ -256,7 +252,7 @@ public class Bookshelves extends JavaPlugin {
             } else if (!value.isJsonArray()) {
                 section.set(key, value.getAsString());
             } else {
-                ArrayList list = new ArrayList();
+                ArrayList<JsonElement> list = new ArrayList<>();
                 JsonArray array = (JsonArray) value;
 
                 for (int i = 0; i < array.size(); ++i) {

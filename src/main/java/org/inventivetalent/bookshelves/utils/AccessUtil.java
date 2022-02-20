@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+@SuppressWarnings("rawtypes")
 public abstract class AccessUtil {
 	private AccessUtil() {
 		throw new UnsupportedOperationException();
