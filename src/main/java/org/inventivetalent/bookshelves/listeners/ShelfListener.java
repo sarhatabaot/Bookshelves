@@ -1,4 +1,4 @@
-package org.inventivetalent.bookshelves;
+package org.inventivetalent.bookshelves.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.inventivetalent.bookshelves.Bookshelves;
 import org.inventivetalent.bookshelves.utils.WorldGuardUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,7 @@ public class ShelfListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
 
-        if (plugin.disabledWorlds.contains(player.getWorld().getName())) {
+        if (plugin.getDisabledWorlds().contains(player.getWorld().getName())) {
             return;
         }
 
@@ -53,7 +54,7 @@ public class ShelfListener implements Listener {
         if (player.isSneaking()) {
             return;
         }
-        if (plugin.worldGuardSupport && !WorldGuardUtils.isAllowedToAccess(player, block)) {
+        if (plugin.isWorldGuardSupport() && !WorldGuardUtils.isAllowedToAccess(player, block)) {
             return;
         }
 
@@ -71,7 +72,7 @@ public class ShelfListener implements Listener {
         Player player = event.getPlayer();
         final Block block = event.getBlock();
 
-        if (plugin.disabledWorlds.contains(player.getWorld().getName())) {
+        if (plugin.getDisabledWorlds().contains(player.getWorld().getName())) {
             return;
         }
 
@@ -116,11 +117,11 @@ public class ShelfListener implements Listener {
         Inventory inventory = event.getInventory();
         Inventory clicked = event.getClickedInventory();
 
-        if (plugin.disabledWorlds.contains(player.getWorld().getName())) {
+        if (plugin.getDisabledWorlds().contains(player.getWorld().getName())) {
             return;
         }
 
-        if (clicked != null && plugin.INVENTORY_TITLE.equals(event.getView().getTitle())) {
+        if (clicked != null && plugin.getINVENTORY_TITLE().equals(event.getView().getTitle())) {
             if (!player.hasPermission("bookshelf.modify")) {
                 event.setCancelled(true);
             }
@@ -130,7 +131,7 @@ public class ShelfListener implements Listener {
             }
         }
         if (event.getClick().isShiftClick()) {
-            if (inventory != null && plugin.INVENTORY_TITLE.equals(event.getView().getTitle())) {
+            if (inventory != null && plugin.getINVENTORY_TITLE().equals(event.getView().getTitle())) {
                 if (!player.hasPermission("bookshelf.modify")) {
                     event.setCancelled(true);
                 }

@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class RestrictionManager {
-
     private final boolean whitelist;
-
     private final List<Material> materials = new ArrayList<>();
 
     public RestrictionManager() {

@@ -16,6 +16,7 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.inventivetalent.bookshelves.listeners.ShelfListener;
 import org.inventivetalent.bookshelves.utils.AccessUtil;
 import org.inventivetalent.bookshelves.utils.HopperUtils;
 import org.inventivetalent.bookshelves.utils.MetaHelper;
@@ -35,10 +36,10 @@ public class Bookshelves extends JavaPlugin {
     public static Bookshelves instance;
 
     int INVENTORY_SIZE = 18;
-    String INVENTORY_TITLE = "Bookshelf";
-    Set<String> disabledWorlds = new HashSet<>();
+    private String INVENTORY_TITLE = "Bookshelf";
+    private Set<String> disabledWorlds = new HashSet<>();
     boolean onlyBooks = true;
-    boolean worldGuardSupport = false;
+    private boolean worldGuardSupport = false;
     boolean checkRestrictions = false;
     boolean hopperSupport = false;
     RestrictionManager restrictionManager = null;
@@ -57,6 +58,18 @@ public class Bookshelves extends JavaPlugin {
 
     public Set<Location> getShelves() {
         return shelves;
+    }
+
+    public String getINVENTORY_TITLE() {
+        return INVENTORY_TITLE;
+    }
+
+    public Set<String> getDisabledWorlds() {
+        return disabledWorlds;
+    }
+
+    public boolean isWorldGuardSupport() {
+        return worldGuardSupport;
     }
 
     @Override
