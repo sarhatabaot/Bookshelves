@@ -38,7 +38,7 @@ public class ScheduleBookLoading extends BukkitRunnable {
                 for (JsonElement next : jsonArray) {
                     if (next.isJsonObject()) {
                         JsonObject jsonObject = next.getAsJsonObject();
-                        Location location = Bookshelves.JsonToLocation(jsonObject.get("location").getAsJsonObject());
+                        Location location = Bookshelves.jsonToLocation(jsonObject.get("location").getAsJsonObject());
                         if (location.getBlock().getType() != Material.BOOKSHELF) {
                             continue;
                         }
@@ -59,7 +59,7 @@ public class ScheduleBookLoading extends BukkitRunnable {
                                     int slot = nextBook.get("slot").getAsInt();
                                     JsonObject jsonItem = nextBook.get("item").getAsJsonObject();
 
-                                    ConfigurationSection yamlItem = Bookshelves.JsonToYaml(jsonItem, new YamlConfiguration());
+                                    ConfigurationSection yamlItem = Bookshelves.jsonToYaml(jsonItem, new YamlConfiguration());
                                     ItemStack itemStack = new ItemBuilder(Material.STONE).fromConfig(yamlItem).build();
 
                                     inventory.setItem(slot, itemStack);

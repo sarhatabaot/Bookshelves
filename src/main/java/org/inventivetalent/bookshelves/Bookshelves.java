@@ -83,8 +83,37 @@ public class Bookshelves extends JavaPlugin {
         instance = this;
         Bukkit.getPluginManager().registerEvents(new ShelfListener(this), this);
 
-        // Save configuration & load values
+        // Save configuration
         saveDefaultConfig();
+        // Load values
+        loadConfigValues();
+        // Initialize restrictions
+        if (checkRestrictions) {
+            restrictionManager = new RestrictionManager();
+        }
+
+        // GriefPrevention compatibility
+        hookGriefPrevention();
+
+        // ShelfFile creation
+        createShelfFile();
+
+        new ScheduleBookLoading(this).runTaskLater(this,40L);
+        new Metrics(this, 5131);
+    }
+
+    private void createShelfFile() {
+        // ShelfFile creation
+        if (!shelfFile.exists()) {
+            try {
+                shelfFile.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadConfigValues() {
         inventorySize = getConfig().getInt("inventory.size");
         if (inventorySize % 9 != 0) {
             getLogger().warning("Inventory size is not a multiple of 9");
@@ -97,14 +126,9 @@ public class Bookshelves extends JavaPlugin {
         onlyBooks = getConfig().getBoolean("onlyBooks", true);
         checkRestrictions = getConfig().getBoolean("restrictions.enabled");
         hopperSupport = getConfig().getBoolean("hoppers");
+    }
 
-        // Initialize restrictions
-        if (checkRestrictions) {
-            restrictionManager = new RestrictionManager();
-        }
-
-        // GriefPrevention compatibility
-        // TODO, this should be in a seperate file, as a listener.
+    private void hookGriefPrevention() {
         if (Bukkit.getPluginManager().isPluginEnabled("GriefPrevention")) {
             getLogger().info("Found GriefPrevention plugin");
             try {
@@ -131,18 +155,6 @@ public class Bookshelves extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-
-        // ShelfFile creation
-        if (!shelfFile.exists()) {
-            try {
-                shelfFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        new ScheduleBookLoading(this).runTaskLater(this,40L);
-        new Metrics(this, 5131);
     }
 
     @Override
@@ -157,13 +169,12 @@ public class Bookshelves extends JavaPlugin {
                     continue;
                 }
                 JsonObject shelfObject = new JsonObject();
-                shelfObject.add("location", LocationToJson(location));
+                shelfObject.add("location", locationToJson(location));
                 ItemStack[] contents = inventory.getContents();
 
-                {
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-
+                try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                     BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)){
+                    
                     dataOutput.writeInt(contents.length);
 
                     for (ItemStack stack : contents) {
@@ -232,7 +243,7 @@ public class Bookshelves extends JavaPlugin {
     }
 
     @Contract("_, _ -> param2")
-    public static ConfigurationSection JsonToYaml(@NotNull JsonObject json, ConfigurationSection section) {
+    public static ConfigurationSection jsonToYaml(@NotNull JsonObject json, ConfigurationSection section) {
         for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
             String key = entry.getKey();
             JsonElement value = entry.getValue();
@@ -242,7 +253,7 @@ public class Bookshelves extends JavaPlugin {
                     var9 = section.createSection(key);
                 }
 
-                var9 = JsonToYaml((JsonObject) value, var9);
+                var9 = jsonToYaml((JsonObject) value, var9);
                 section.set(key, var9);
             } else if (!value.isJsonArray()) {
                 section.set(key, value.getAsString());
@@ -261,7 +272,7 @@ public class Bookshelves extends JavaPlugin {
         return section;
     }
 
-    public static @NotNull JsonObject LocationToJson(@NotNull Location location) {
+    public static @NotNull JsonObject locationToJson(@NotNull Location location) {
         JsonObject json = new JsonObject();
         json.addProperty("world", location.getWorld().getName());
         json.addProperty("x", location.getX());
@@ -270,7 +281,7 @@ public class Bookshelves extends JavaPlugin {
         return json;
     }
 
-    public static @NotNull Location JsonToLocation(@NotNull JsonObject json) {
+    public static @NotNull Location jsonToLocation(@NotNull JsonObject json) {
         String worldName = json.get("world").getAsString();
         double x = json.get("x").getAsDouble();
         double y = json.get("y").getAsDouble();
