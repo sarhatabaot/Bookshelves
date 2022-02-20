@@ -1,15 +1,12 @@
 package org.inventivetalent.bookshelves;
 
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class ScheduledItemTransfer implements Runnable {
-
+public class ScheduledItemTransfer extends BukkitRunnable {
     private final Inventory source;
-
     private final Inventory destination;
-
     private final ItemStack itemStack;
 
     public ScheduledItemTransfer(Inventory source, Inventory destination, ItemStack itemStack, int seconds) {
@@ -17,24 +14,28 @@ public class ScheduledItemTransfer implements Runnable {
         this.destination = destination;
         this.itemStack = itemStack;
 
-        Bukkit.getScheduler().runTaskLater(Bookshelves.instance, this, 20L * seconds);
+        runTaskLater(Bookshelves.instance, 20L * seconds);
     }
 
     @Override
     public void run() {
-        if (source.contains(itemStack)) {
-            if (destination.firstEmpty() > -1) {
-                if (itemStack.getAmount() <= 2) {
-                    source.remove(itemStack);
-                    destination.addItem(itemStack);
-                } else {
-                    ItemStack partialStack = itemStack.clone();
-                    partialStack.setAmount(2);
-                    itemStack.setAmount(itemStack.getAmount() - 2);
-                    destination.addItem(partialStack);
-                }
-            }
+        if (!source.contains(itemStack)) {
+            return;
         }
+        if (destination.firstEmpty() <= -1) {
+            return;
+        }
+
+        if (itemStack.getAmount() <= 2) {
+            source.remove(itemStack);
+            destination.addItem(itemStack);
+            return;
+        }
+
+        ItemStack partialStack = itemStack.clone();
+        partialStack.setAmount(2);
+        itemStack.setAmount(itemStack.getAmount() - 2);
+        destination.addItem(partialStack);
     }
 
 }
