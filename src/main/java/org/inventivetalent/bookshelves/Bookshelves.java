@@ -37,7 +37,7 @@ public class Bookshelves extends JavaPlugin {
     public static Bookshelves instance;
 
     int INVENTORY_SIZE = 18;
-    private String INVENTORY_TITLE = "Bookshelf";
+    private String inventoryTitle = "Bookshelf";
     private Set<String> disabledWorlds = new HashSet<>();
     boolean onlyBooks = true;
     private boolean worldGuardSupport = false;
@@ -61,8 +61,8 @@ public class Bookshelves extends JavaPlugin {
         return shelves;
     }
 
-    public String getINVENTORY_TITLE() {
-        return INVENTORY_TITLE;
+    public String getInventoryTitle() {
+        return inventoryTitle;
     }
 
     public Set<String> getDisabledWorlds() {
@@ -85,7 +85,7 @@ public class Bookshelves extends JavaPlugin {
             getLogger().warning("Inventory size is not a multiple of 9");
             INVENTORY_SIZE = 18;
         }
-        INVENTORY_TITLE = ChatColor.translateAlternateColorCodes('&', getConfig().getString("inventory.title")) +/* Unique title */"§B§S";
+        inventoryTitle = ChatColor.translateAlternateColorCodes('&', getConfig().getString("inventory.title")) +/* Unique title */"§B§S";
         if (getConfig().contains("disabledWorlds")) {
             disabledWorlds.addAll(getConfig().getStringList("disabledWorlds"));
         }
@@ -266,7 +266,7 @@ public class Bookshelves extends JavaPlugin {
     public Inventory initShelf(@NotNull Block block) {
         Inventory inventory;
         if (!block.hasMetadata("BOOKSHELF_INVENTORY")) {
-            inventory = Bukkit.createInventory(null, INVENTORY_SIZE, INVENTORY_TITLE);
+            inventory = Bukkit.createInventory(null, INVENTORY_SIZE, inventoryTitle);
             MetaHelper.setMetaValue(block, "BOOKSHELF_INVENTORY", inventory);
 
             shelves.add(block.getLocation());

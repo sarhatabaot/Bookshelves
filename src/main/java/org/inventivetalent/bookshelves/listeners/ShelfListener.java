@@ -121,7 +121,7 @@ public class ShelfListener implements Listener {
             return;
         }
 
-        if (clicked != null && plugin.getINVENTORY_TITLE().equals(event.getView().getTitle())) {
+        if (clicked != null && plugin.getInventoryTitle().equals(event.getView().getTitle())) {
             if (!player.hasPermission("bookshelf.modify")) {
                 event.setCancelled(true);
             }
@@ -131,7 +131,7 @@ public class ShelfListener implements Listener {
             }
         }
         if (event.getClick().isShiftClick()) {
-            if (inventory != null && plugin.getINVENTORY_TITLE().equals(event.getView().getTitle())) {
+            if (inventory != null && plugin.getInventoryTitle().equals(event.getView().getTitle())) {
                 if (!player.hasPermission("bookshelf.modify")) {
                     event.setCancelled(true);
                 }
